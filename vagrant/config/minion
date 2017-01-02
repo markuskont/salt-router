@@ -1,0 +1,17 @@
+file_client: local
+#master: localhost
+mine_interval: 1
+environment: DEVEL
+
+file_roots:
+  DEVEL:
+    - /vagrant/salt
+
+grains:
+  roles:
+   - router
+   - dns
+   - dhcp
+  server: None
+  location: molvania
+  company: bestestCompanyEver
