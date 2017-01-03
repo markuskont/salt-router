@@ -7,6 +7,7 @@ isc-dhcp-server:
     - watch:
       - /etc/default/isc-dhcp-server
     - require:
+      - pkg: isc-dhcp-server
       - /etc/default/isc-dhcp-server
 
 /etc/default/isc-dhcp-server:

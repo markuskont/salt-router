@@ -21,7 +21,7 @@ router:
           lease:
             default: 86400
             max: 86400
-    resolver:
+    dns:
       manage: true
     firewall:
       manage: true

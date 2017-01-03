@@ -1,0 +1,17 @@
+acl internal {
+  127.0.0.1/32;
+  192.168.0.0/16;
+  10.0.0.0/8;
+  172.16.0.0/12;
+};
+options {
+  directory "/var/cache/bind";
+  forwarders {
+    8.8.8.8;
+    8.8.4.4;
+  };
+  allow-query { internal; };
+  dnssec-validation auto;
+  auth-nxdomain no;    # conform to RFC1035
+  listen-on-v6 { any; };
+};
