@@ -10,7 +10,8 @@ boxes = [
     :internal   => [
       "192.168.33.1",
       "192.168.43.1"
-    ]
+    ],
+    :salt       => true
   }
   #{
   #  :name       => "jessie",
@@ -30,18 +31,20 @@ Vagrant.configure(2) do |config|
       config.vm.box = opts[:image]
       config.vm.hostname = opts[:name]
       #config.vm.synced_folder "salt/", "/srv/salt/"
-      opts[:internal].each do |ip|
-        config.vm.network 'private_network',
-          ip: ip
-      end
       config.vm.provider "virtualbox" do |v|
         v.customize ["modifyvm", :id, "--memory", opts[:mem]]
         v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
       end
-      config.vm.provision :salt do |salt|
-        salt.minion_config = "vagrant/config/minion"
-        salt.masterless = true
-        salt.run_highstate = true
+      if opts[:salt] == true
+        opts[:internal].each do |ip|
+          config.vm.network 'private_network',
+            ip: ip
+        end
+        config.vm.provision :salt do |salt|
+          salt.minion_config = "vagrant/config/minion"
+          salt.masterless = true
+          salt.run_highstate = true
+        end
       end
     end
   end

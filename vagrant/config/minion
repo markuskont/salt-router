@@ -7,6 +7,10 @@ file_roots:
   DEVEL:
     - /vagrant/salt
 
+pillar_roots:
+  base:
+    - /vagrant/pillar
+
 grains:
   roles:
    - router
@@ -14,4 +18,4 @@ grains:
    - dhcp
   server: None
   location: molvania
-  company: bestestCompanyEver
+  company: example
