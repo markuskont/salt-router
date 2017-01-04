@@ -6,37 +6,53 @@ iptables-incoming-icmp-chain-ipv4:
     - name: incoming-icmp
 
 {% for icmp_msg_num, icmp_msg_text in {
-        '0': 'echo-reply',
-        '3/1': 'destination-unreachable/host-unreachable',
-        '3/3': 'destination-unreachable/port-unreachable',
-        '3/4': 'destination-unreachable/fragmentation-needed',
-        '8': 'echo-request',
-        '11': 'time-exceeded',
-    }.items() %}
+    '0': 'echo-reply',
+    '3/1': 'destination-unreachable/host-unreachable',
+    '3/3': 'destination-unreachable/port-unreachable',
+    '3/4': 'destination-unreachable/fragmentation-needed',
+    '8': 'echo-request',
+    '11': 'time-exceeded',
+  }.items() %}
 iptables-allow-incoming-icmp-{{ icmp_msg_text }}:
-    iptables.append:
-        - table: filter
-        - chain: incoming-icmp
-        - family: ipv4
-        - match:
-            - icmp
-            - comment
-            - limit
-        - protocol: icmp
-        - icmp-type: {{ icmp_msg_num }}
-        - comment: "iptables-ipv4: Allow incoming {{ icmp_msg_text }}"
-        - limit: {{inc_icmp_rate_min}}/min
-        - jump: ACCEPT
+  iptables.append:
+    - table: filter
+    - chain: incoming-icmp
+    - family: ipv4
+    - match:
+      - icmp
+      - comment
+      - limit
+    - protocol: icmp
+    - icmp-type: {{ icmp_msg_num }}
+    - comment: "iptables-ipv4: Allow incoming {{ icmp_msg_text }}"
+    - limit: {{inc_icmp_rate_min}}/min
+    - jump: ACCEPT
 {% endfor %}
 
+iptables-incoming-icmp-chain-log-reject-ipv4:
+  iptables.append:
+    - chain: incoming-icmp
+    - match:
+      - comment
+    - comment: 'iptables.icmp: Log before rejecting'
+    - jump: LOG
+    - log-prefix: "iptables-incoming-icmp-rejected: "
+    - log-level: 4
+    - match: limit
+    - limit: 3/min
+    - source: '0.0.0.0/0'
+    - destination: '0.0.0.0/0'
+
 iptables-incoming-icmp-chain-last-rule-ipv4:
-    iptables.append:
-        - chain: incoming-icmp
-        - match:
-            - comment
-        - comment: 'iptables.icmp: Reject the rest'
-        - jump: REJECT
-        - order: last
+  iptables.append:
+    - chain: incoming-icmp
+    - match:
+      - comment
+    - comment: 'iptables.icmp: Reject the rest'
+    - jump: REJECT
+    - order: last
+    - require:
+      - iptables: iptables-incoming-icmp-chain-log-reject-ipv4
 
 # default incoming rules
 default-established-traffic:
@@ -55,11 +71,12 @@ default-input-icmp:
     - table: filter
     - chain: INPUT
     - protocol: icmp
-    -
+    - jump: incoming-icmp
+    - save: True
 
 default-localhost:
   iptables.insert:
-    - position: 2
+    - position: 3
     - table: filter
     - chain: INPUT
     - jump: ACCEPT
@@ -69,7 +86,7 @@ default-localhost:
 
 default-ssh-input:
   iptables.insert:
-    - position: 2
+    - position: 4
     - table: filter
     - chain: INPUT
     - jump: ACCEPT
