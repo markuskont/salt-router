@@ -23,5 +23,3 @@ router:
             max: 86400
     dns:
       manage: true
-    firewall:
-      manage: true

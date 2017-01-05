@@ -2,7 +2,6 @@
 
 include:
   - router.sysctl
-  - router.firewall
   {% if vars['dhcp']['manage'] == true %}
   - router.dhcp
   {% endif %}

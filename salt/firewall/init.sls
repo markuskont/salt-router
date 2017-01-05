@@ -1,18 +1,21 @@
 {% set inc_icmp_rate_min = 90 %}
-
-# create chains here
-iptables-incoming-icmp-chain-ipv4:
-  iptables.chain_present:
-    - name: incoming-icmp
-
-{% for icmp_msg_num, icmp_msg_text in {
+{% set default_routes = salt['network.default_route']() %}
+{% set acceptable_icmp = {
     '0': 'echo-reply',
     '3/1': 'destination-unreachable/host-unreachable',
     '3/3': 'destination-unreachable/port-unreachable',
     '3/4': 'destination-unreachable/fragmentation-needed',
     '8': 'echo-request',
     '11': 'time-exceeded',
-  }.items() %}
+  }
+%}
+
+# create chains here
+iptables-incoming-icmp-chain-ipv4:
+  iptables.chain_present:
+    - name: incoming-icmp
+
+{% for icmp_msg_num, icmp_msg_text in acceptable_icmp.items() %}
 iptables-allow-incoming-icmp-{{ icmp_msg_text }}:
   iptables.append:
     - table: filter
@@ -27,6 +30,7 @@ iptables-allow-incoming-icmp-{{ icmp_msg_text }}:
     - comment: "iptables-ipv4: Allow incoming {{ icmp_msg_text }}"
     - limit: {{inc_icmp_rate_min}}/min
     - jump: ACCEPT
+    - save: True
 {% endfor %}
 
 iptables-incoming-icmp-chain-log-reject-ipv4:
@@ -36,12 +40,13 @@ iptables-incoming-icmp-chain-log-reject-ipv4:
       - comment
     - comment: 'iptables.icmp: Log before rejecting'
     - jump: LOG
-    - log-prefix: "iptables-incoming-icmp-rejected: "
+    - log-prefix: "iptables-inc-icmp-rej: "
     - log-level: 4
     - match: limit
     - limit: 3/min
     - source: '0.0.0.0/0'
     - destination: '0.0.0.0/0'
+    - save: True
 
 iptables-incoming-icmp-chain-last-rule-ipv4:
   iptables.append:
@@ -51,6 +56,7 @@ iptables-incoming-icmp-chain-last-rule-ipv4:
     - comment: 'iptables.icmp: Reject the rest'
     - jump: REJECT
     - order: last
+    - save: True
     - require:
       - iptables: iptables-incoming-icmp-chain-log-reject-ipv4
 
@@ -63,7 +69,7 @@ default-established-traffic:
     - connstate: RELATED,ESTABLISHED
     - jump: ACCEPT
     - save: True
-    - comment: "000 - Allow return traffic from local box"
+    - comment: "Allow return traffic from local box"
 
 default-input-icmp:
   iptables.insert:
@@ -82,7 +88,7 @@ default-localhost:
     - jump: ACCEPT
     - in-interface: 127.0.0.1
     - save: True
-    - comment: "001 - allow loopback interface connections"
+    - comment: "Allow loopback interface connections"
 
 default-ssh-input:
   iptables.insert:
@@ -96,6 +102,19 @@ default-ssh-input:
     - proto: tcp
     - sport: 1025:65535
     - save: True
+    - comment: "Allow SSH connections"
+
+# default forward rules
+default-forward-established-traffic:
+  iptables.insert:
+    - position: 1
+    - table: filter
+    - chain: FORWARD
+    - in-interface: {{grains['ip4_ext']}}
+    - connstate: RELATED,ESTABLISHED
+    - jump: ACCEPT
+    - save: True
+    - comment: "Allow return traffic to local network"
 
 # Final log and drop
 # We shall not be using ipv6, so only drop

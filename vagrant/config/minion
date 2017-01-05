@@ -11,6 +11,10 @@ pillar_roots:
   base:
     - /vagrant/pillar
 
+reactor:
+  - 'minion_start':
+    - /vagrant/reactor/sync_grains.sls
+
 grains:
   roles:
    - router
