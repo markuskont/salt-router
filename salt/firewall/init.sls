@@ -9,6 +9,12 @@
   }
 %}
 {% set private = ['192.168.0.0/16', '10.0.0.0/8', '172.16.0.0/12'] %}
+{% set basic_udp = {
+  '53': 'DNS',
+  '67': 'DHCP',
+  '68': 'DHCP',
+  '123': 'NTP'
+} %}
 # create incoming icmp chain
 iptables-incoming-icmp-chain-ipv4:
   iptables.chain_present:
@@ -61,7 +67,45 @@ iptables-incoming-icmp-chain-last-rule-ipv4:
     - require:
       - iptables: iptables-incoming-icmp-chain-log-reject-ipv4
 
-# create nat filter
+# create incoming udp chain and basic rules
+incoming-udp-chain:
+  iptables.chain_present:
+    - name: incoming-udp
+    - table: filter
+
+incoming-udp-last-rule:
+  iptables.append:
+    - chain: incoming-udp
+    - table: filter
+    - jump: RETURN
+    - save: True
+    - comment: 'Return packet to main input chain'
+    - require:
+      - iptables: incoming-udp-chain
+
+# allow basic services from internal interfaces
+{% for interface, addrs in grains['ip4_interfaces'].items() %}
+  {% if (interface != grains['ip4_ext']) and (interface != 'lo')  %}
+    {% for port, comment in basic_udp.items() %}
+incoming-udp-{{interface}}-{{port}}:
+  iptables.insert:
+    - position: 1
+    - chain: incoming-udp
+    - table: filter
+    - proto: udp
+    - dport: {{port}}
+    - in-interface: {{interface}}
+    - comment: {{comment}}
+    - jump: ACCEPT
+    - save: True
+    - require:
+      - iptables: incoming-udp-chain
+      - iptables: incoming-udp-last-rule
+    {% endfor %}
+  {% endif %}
+{% endfor %}
+
+# create nat filter and basic rules
 # POSTROUTING chain
 iptables-nat-chain:
   iptables.chain_present:
@@ -93,12 +137,23 @@ default-established-traffic:
     - save: True
     - comment: "Allow return traffic to local box"
 
+default-input-udp:
+  iptables.insert:
+    - position: 2
+    - table: filter
+    - chain: INPUT
+    - protocol: udp
+    - comment: 'Redirect UDP traffic to incoming-udp chain'
+    - jump: incoming-udp
+    - save: True
+
 default-input-icmp:
   iptables.insert:
     - position: 2
     - table: filter
     - chain: INPUT
     - protocol: icmp
+    - comment: 'Redirect ICMP traffic to incoming-icmp chain'
     - jump: incoming-icmp
     - save: True
 
