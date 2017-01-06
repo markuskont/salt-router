@@ -1,5 +1,4 @@
 {% set inc_icmp_rate_min = 90 %}
-{% set default_routes = salt['network.default_route']() %}
 {% set acceptable_icmp = {
     '0': 'echo-reply',
     '3/1': 'destination-unreachable/host-unreachable',
@@ -9,8 +8,8 @@
     '11': 'time-exceeded',
   }
 %}
-
-# create chains here
+{% set private = ['192.168.0.0/16', '10.0.0.0/8', '172.16.0.0/12'] %}
+# create incoming icmp chain
 iptables-incoming-icmp-chain-ipv4:
   iptables.chain_present:
     - name: incoming-icmp
@@ -36,6 +35,7 @@ iptables-allow-incoming-icmp-{{ icmp_msg_text }}:
 iptables-incoming-icmp-chain-log-reject-ipv4:
   iptables.append:
     - chain: incoming-icmp
+    - table: filter
     - match:
       - comment
     - comment: 'iptables.icmp: Log before rejecting'
@@ -51,6 +51,7 @@ iptables-incoming-icmp-chain-log-reject-ipv4:
 iptables-incoming-icmp-chain-last-rule-ipv4:
   iptables.append:
     - chain: incoming-icmp
+    - table: filter
     - match:
       - comment
     - comment: 'iptables.icmp: Reject the rest'
@@ -59,6 +60,27 @@ iptables-incoming-icmp-chain-last-rule-ipv4:
     - save: True
     - require:
       - iptables: iptables-incoming-icmp-chain-log-reject-ipv4
+
+# create nat filter
+# POSTROUTING chain
+iptables-nat-chain:
+  iptables.chain_present:
+    - name: POSTROUTING
+    - table: nat
+
+{% for net in private %}
+nat-outgoing-traffic-{{net}}:
+  iptables.append:
+    - chain: POSTROUTING
+    - table: nat
+    - source: {{net}}
+    - out-interface: {{grains['ip4_ext']}}
+    - comment: "NAT outgoing traffic from private network"
+    - jump: "MASQUERADE"
+    - require:
+      - iptables: iptables-nat-chain
+{% endfor %}
+
 
 # default incoming rules
 default-established-traffic:
@@ -86,7 +108,7 @@ default-localhost:
     - table: filter
     - chain: INPUT
     - jump: ACCEPT
-    - in-interface: 127.0.0.1
+    - in-interface: lo
     - save: True
     - comment: "Allow loopback interface connections"
 
@@ -115,6 +137,19 @@ default-forward-established-traffic:
     - jump: ACCEPT
     - save: True
     - comment: "Allow return traffic to local network"
+
+{% for net in private %}
+default-forward-new-traffic-{{net}}:
+  iptables.insert:
+    - position: 2
+    - table: filter
+    - chain: FORWARD
+    - source: {{net}}
+    - out-interface: {{grains['ip4_ext']}}
+    - jump: ACCEPT
+    - save: True
+    - comment: "Allow outgoing traffic from private network {{net}}"
+{% endfor %}
 
 # Final log and drop
 # We shall not be using ipv6, so only drop
