@@ -91,7 +91,7 @@ default-established-traffic:
     - connstate: RELATED,ESTABLISHED
     - jump: ACCEPT
     - save: True
-    - comment: "Allow return traffic from local box"
+    - comment: "Allow return traffic to local box"
 
 default-input-icmp:
   iptables.insert:
@@ -148,7 +148,7 @@ default-forward-new-traffic-{{net}}:
     - out-interface: {{grains['ip4_ext']}}
     - jump: ACCEPT
     - save: True
-    - comment: "Allow outgoing traffic from private network {{net}}"
+    - comment: "Allow outgoing traffic from local network {{net}}"
 {% endfor %}
 
 # Final log and drop
