@@ -1,5 +1,3 @@
-DEVEL:
-  'roles:router':
-    - match: grain
-    - router
-    - firewall
+base:
+  'test.spin.sise':
+    - openvpn

@@ -1,0 +1,26 @@
+{% set vars = pillar['router'][grains['fqdn']] %}
+port 1195
+proto udp
+dev tun0
+tls-server
+
+ca /etc/openvpn/server/ca.crt
+cert /etc/openvpn/server/{{ salt['grains.get']('fqdn') }}.crt
+key /etc/openvpn/server/{{ salt['grains.get']('fqdn') }}.key
+dh /etc/openvpn/server/dh2048.pem
+
+cipher AES-128-CBC
+client-to-client
+
+mssfix 1200
+comp-lzo yes
+keepalive 7 20
+server 192.168.69.0 255.255.255.0
+
+script-security 2
+
+route 192.168.1.0 255.255.255.0
+
+push "route 192.168.69.0 255.255.255.0"
+push "route 192.168.1.0 255.255.255.0"
+push "dhcp-option DNS 192.168.1.5"
