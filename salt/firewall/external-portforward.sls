@@ -33,8 +33,8 @@ portforward-{{int_ip}}-{{port.ext}}-{{port.int}}:
     - save: True
     - require:
       - iptables: iptables-manipulate-chain
-    {% if port_conf['restrictions'] is defined %}
-      {% for restriction in port_conf.restrictions %}
+    {% if port.restrictions is defined %}
+      {% for restriction in port.restrictions %}
 allow-forward-{{restriction}}-{{map.ext_ip}}-{{port.ext}}-{{port.int}}:
   iptables.insert:
     - position: 1
@@ -57,12 +57,12 @@ allow-forward-{{map.ext_ip}}-{{port.ext}}-{{port.int}}:
     - chain: external-portforward-allow
     - table: filter
     - proto: tcp
-    - destination: {{int_ip}}/32
+    - source: '0.0.0.0/0'
+    - destination: {{map.ext_ip}}/32
     - dport: {{port.int}}
     - match: state
     - connstate: NEW
     - comment: "Allow external connection to forwarded port {{port.ext}}"
-    - jump: ACCEPT
     - require:
       - iptables: external-portforward-allow
     {% endif %}
