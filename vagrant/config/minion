@@ -18,6 +18,8 @@ reactor:
 grains:
   roles:
    - router
+   - firewall
+   - vpn
    - dns
    - dhcp
   server: None

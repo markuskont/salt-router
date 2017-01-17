@@ -42,11 +42,12 @@ allow-forward-{{restriction}}-{{map.ext_ip}}-{{port.ext}}-{{port.int}}:
     - table: filter
     - proto: tcp
     - source: {{restriction}}
-    - destination: {{map.ext_ip}}/32
-    - dport: {{port.int}}
+    - destination: {{int_ip}}/32
+    - dport: {{port.ext}}
     - match: state
     - connstate: NEW
     - comment: "Allow external connection to forwarded port {{port.ext}}, limited to {{restriction}}"
+    - jump: ACCEPT
     - require:
       - iptables: external-portforward-allow
       {% endfor %}
@@ -58,11 +59,12 @@ allow-forward-{{map.ext_ip}}-{{port.ext}}-{{port.int}}:
     - table: filter
     - proto: tcp
     - source: '0.0.0.0/0'
-    - destination: {{map.ext_ip}}/32
+    - destination: {{int_ip}}/32
     - dport: {{port.int}}
     - match: state
     - connstate: NEW
     - comment: "Allow external connection to forwarded port {{port.ext}}"
+    - jump: ACCEPT
     - require:
       - iptables: external-portforward-allow
     {% endif %}
