@@ -8,21 +8,11 @@ boxes = [
     :cpu        => "1",
     :image      => 'ubuntu/xenial64',
     :internal   => [
-      "192.168.33.254",
-      "192.168.43.254"
+      "192.168.1.254",
+      "192.168.2.254"
     ],
     :salt       => true
   }
-  #{
-  #  :name       => "jessie",
-  #  :mem        => "1024",
-  #  :cpu        => "1",
-  #  :image      => 'debian/jessie64',
-  #  :internal   => [
-  #    "192.168.34.1",
-  #    "192.168.44.1"
-  #  ]
-  #}
 ]
 
 Vagrant.configure(2) do |config|
