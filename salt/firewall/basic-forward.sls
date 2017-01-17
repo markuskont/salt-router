@@ -61,7 +61,7 @@ default-forward-self-{{net}}-{{key}}:
     - out-interface: {{key}}
     - jump: ACCEPT
     - save: True
-    - comment: "Allow portforward traffic originating from int segment {{net}} beghind {{key}}"
+    - comment: "Allow portforward traffic originating from int segment {{net}} behind {{key}}"
     {% endif %}
   {% endfor %}
 {% endfor %}
