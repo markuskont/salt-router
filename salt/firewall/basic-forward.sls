@@ -26,6 +26,18 @@ default-forward-established-traffic:
     - save: True
     - comment: "Allow return traffic to local network"
 
+external-portforward-allow-jump:
+  iptables.insert:
+    - position: 2
+    - table: filter
+    - chain: FORWARD
+    - protocol: tcp
+    - comment: 'Redirect TCP traffic to external-portforward-allow chain'
+    - jump: external-portforward-allow
+    - save: True
+    - require:
+      - iptables: allow-portforward-chain
+
 {% for net in map.private %}
 default-forward-new-traffic-{{net}}:
   iptables.insert:

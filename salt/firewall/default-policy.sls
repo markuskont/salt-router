@@ -7,7 +7,7 @@ deny-{{family}}-{{chain}}-log:
     - table: filter
     - chain: {{chain}}
     - jump: LOG
-    - log-prefix: "iptables-{{family}}-{{chain}}-dropped: "
+    - log-prefix: "iptables-{{chain}}-dropped: "
     - log-level: 4
     - match: limit
     - limit: 3/min

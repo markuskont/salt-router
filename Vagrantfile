@@ -30,6 +30,9 @@ Vagrant.configure(2) do |config|
           config.vm.network 'private_network',
             ip: ip
         end
+        config.vm.network "forwarded_port",
+          guest: 2180,
+          host: 2180
         config.vm.provision :salt do |salt|
           salt.minion_config = "vagrant/config/minion"
           salt.masterless = true
