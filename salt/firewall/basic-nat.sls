@@ -6,6 +6,11 @@ iptables-nat-chain:
     - name: POSTROUTING
     - table: nat
 
+iptables-manipulate-chain:
+  iptables.chain_present:
+    - name: PREROUTING
+    - table: nat
+
 {% for net in map.private %}
 nat-outgoing-traffic-{{net}}:
   iptables.append:

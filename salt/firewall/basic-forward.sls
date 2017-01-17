@@ -1,5 +1,20 @@
 {% from "firewall/map.jinja" import map with context %}
 # default forward rules
+
+allow-portforward-chain:
+  iptables.chain_present:
+    - name: external-portforward-allow
+
+allow-portforward-last-rule:
+  iptables.append:
+    - chain: external-portforward-allow
+    - table: filter
+    - jump: RETURN
+    - save: True
+    - comment: 'Return packet to main forward chain'
+    - require:
+      - iptables: external-portforward-allow
+
 default-forward-established-traffic:
   iptables.insert:
     - position: 1

@@ -23,3 +23,19 @@ router:
             max: 86400
     dns:
       manage: true
+    firewall:
+      manage: true
+      portforward:
+        192.168.1.90:
+          - ext: 2180
+            int: 80
+          - ext: 554
+            int: 554
+          - ext: 8000
+            int: 8000
+        192.168.1.91:
+          - ext: 33893
+          - int: 3389
+          - restrictions:
+            - 1.2.3.4/32
+            - 3.4.5.0/24

@@ -1,6 +1,6 @@
 include:
   - firewall.incoming-icmp
-  - firewall.incoming-udp
+  - firewall.internal-incoming-udp
 
 # default incoming rules
 default-established-traffic:
