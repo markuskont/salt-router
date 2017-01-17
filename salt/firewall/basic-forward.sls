@@ -41,7 +41,7 @@ external-portforward-allow-jump:
 {% for net in map.private %}
 default-forward-new-traffic-{{net}}:
   iptables.insert:
-    - position: 2
+    - position: 3
     - table: filter
     - chain: FORWARD
     - source: {{net}}
@@ -49,4 +49,19 @@ default-forward-new-traffic-{{net}}:
     - jump: ACCEPT
     - save: True
     - comment: "Allow outgoing traffic from local network {{net}}"
+  {% for key, ips in grains['ip4_interfaces'].items() %}
+    {% if (key != grains['ip4_ext']) and (key != 'lo') %}
+default-forward-self-{{net}}-{{key}}:
+  iptables.insert:
+    - position: 3
+    - table: filter
+    - chain: FORWARD
+    - source: {{net}}
+    - in-interface: {{key}}
+    - out-interface: {{key}}
+    - jump: ACCEPT
+    - save: True
+    - comment: "Allow portforward traffic originating from int segment {{net}} beghind {{key}}"
+    {% endif %}
+  {% endfor %}
 {% endfor %}

@@ -1,5 +1,5 @@
 router:
-  xenial:
+  xenial-r1:
     dhcp:
       manage: true
       authoritive: true
@@ -29,10 +29,16 @@ router:
         192.168.1.90:
           - ext: 2180
             int: 80
+            restrictions:
+              - 0.0.0.0/0
           - ext: 554
             int: 554
+            restrictions:
+              - 0.0.0.0/0
           - ext: 8000
             int: 8000
+            restrictions:
+              - 0.0.0.0/0
         192.168.1.91:
           - ext: 33893
             int: 3389
