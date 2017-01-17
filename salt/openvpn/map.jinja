@@ -7,13 +7,4 @@
         'user': 'nobody',
         'group': 'nogroup',
     },
-    'Ubuntu': {
-        'pkgs': ['openvpn'],
-        'service': 'openvpn',
-        'conf_dir': '/etc/openvpn/server/',
-        'dh_files': ['1024', '2048'],
-        'user': 'nobody',
-        'group': 'nogroup',
-    },
-
-    }, grain='os', merge=salt['pillar.get']('openvpn:lookup')) %}
+    }, grain='os_family', merge=salt['pillar.get']('openvpn:lookup')) %}
