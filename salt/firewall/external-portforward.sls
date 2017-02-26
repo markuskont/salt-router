@@ -43,7 +43,7 @@ allow-forward-{{restriction}}-{{map.ext_ip}}-{{port.ext}}-{{port.int}}:
     - proto: tcp
     - source: {{restriction}}
     - destination: {{int_ip}}/32
-    - dport: {{port.int}}
+    - dport: {{port.int|replace('-', ':')}}
     - match: state
     - connstate: NEW
     - comment: "Allow external connection to forwarded port {{port.ext}}, limited to {{restriction}}"
@@ -60,7 +60,7 @@ allow-forward-{{map.ext_ip}}-{{port.ext}}-{{port.int}}:
     - proto: tcp
     - source: '0.0.0.0/0'
     - destination: {{int_ip}}/32
-    - dport: {{port.int}}
+    - dport: {{port.int|replace('-', ':')}}
     - match: state
     - connstate: NEW
     - comment: "Allow external connection to forwarded port {{port.ext}}"
