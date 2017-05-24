@@ -9,5 +9,5 @@ DEVEL:
     - match: grain
     - gw.openvpn
   'roles:ids':
-    - match: grains
+    - match: grain
     - gw.suricata

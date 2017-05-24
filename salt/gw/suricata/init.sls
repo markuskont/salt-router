@@ -1,31 +1,46 @@
-{% set os = grains.os|lower() %}
+
+{% if grains.os == 'Ubuntu' %}
+  {% set os = grains.os|lower() %}
+  {% set codename = grains.oscodename %}
+{% elif grains.os == 'Debian' %}
+  {% set os = 'ubuntu'%}
+  {% if grains.oscodename == 'jessie' %}
+    {% set codename = 'vivid' %}
+  {% else %}
+suricata.fail.codename:
+  test.fail_without_changes:
+    - name: unsupported Debian version
+  {% endif %}
+{% else %}
+suricata.fail.os:
+  test.fail_without_changes:
+    - name: unsupported OS
+{% endif %}
 
 include:
   - gw.suricata.ethtool
 
-suricata:
+gw.suricata:
   pkgrepo.managed:
+    - name: suricata
     - humanname: OISF suricata stable repository
     - clean_file: True
-    {% if grains['os'] == 'Ubuntu' %}
-    - ppa: oisf/suricata-stable
-    {% elif grains['os'] == 'jessie' %}
     - name: deb http://ppa.launchpad.net/oisf/suricata-stable/{{ os }} {{ codename }} main
     - file: /etc/apt/sources.list.d/oisf-suricata-stable.list
     - keyserver: keyserver.ubuntu.com
     - keyid: 9F6FC9DDB1324714B78062CBD7F87B2966EB736F
-    {% endif %}
   pkg.latest:
+    - name: suricata
     - refresh: True
     - pkgs:
       - libhtp1
-      - {{pkg}}
+      - suricata
   service.running:
-    - name: {{pkg}}
+    - name: suricata
     - enable: True
-    - watch:
-      - /etc/default/suricata
-      - /etc/suricata/suricata.yam
+#    - watch:
+#      - /etc/default/suricata
+#      - /etc/suricata/suricata.yam
 
 #/etc/suricata/suricata.yam:
 #  file.managed:
