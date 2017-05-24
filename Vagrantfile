@@ -32,7 +32,7 @@ boxes = [
     :salt         => true,
     :saltmaster   => false,
     :portforward  => {
-      2180 =>  2180
+      2181 =>  2181
     }
   },
 #  {

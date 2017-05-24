@@ -1,11 +1,11 @@
-{% from "firewall/map.jinja" import map with context %}
+{% from "gw/firewall/map.jinja" import map with context %}
 include:
-  - firewall.incoming-icmp
-  - firewall.internal-incoming-udp
-  - firewall.basic-nat
-  - firewall.basic-input
-  - firewall.basic-forward
-  {% if map.pillar.portforward %}
-  - firewall.external-portforward
+  - gw.firewall.incoming-icmp
+  - gw.firewall.internal-incoming-udp
+  - gw.firewall.basic-nat
+  - gw.firewall.basic-input
+  - gw.firewall.basic-forward
+  {% if 'portforward' in map.pillar %}
+  - gw.firewall.external-portforward
   {% endif %}
-  - firewall.default-policy
+  - gw.firewall.default-policy

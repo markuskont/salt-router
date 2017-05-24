@@ -1,4 +1,4 @@
-{% from "openvpn/map.jinja" import map with context %}
+{% from "gw/openvpn/map.jinja" import map with context %}
 
 install openvpn:
   pkg.installed:

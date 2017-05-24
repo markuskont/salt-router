@@ -27,17 +27,17 @@ include:
     - name: {{pkg}}
     - enable: True
     - watch:
-      - {{conf}}
-      - {{params}}
+      - /etc/default/suricata
+      - /etc/suricata/suricata.yam
 
-{{conf}}:
-  file.managed:
-    - mode: 644
-    - source: salt://files/suricata.jinja
-    - template: jinja
-
-
-{{params}}:
-  file.managed:
-    - mode: 644
-    - source: salt://files/default.conf
+#/etc/suricata/suricata.yam:
+#  file.managed:
+#    - mode: 644
+#    - source: salt://files/suricata.jinja
+#    - template: jinja
+#
+#
+#/etc/default/suricata:
+#  file.managed:
+#    - mode: 644
+#    - source: salt://files/default.conf

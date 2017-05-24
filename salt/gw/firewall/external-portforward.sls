@@ -1,6 +1,6 @@
-{% from "firewall/map.jinja" import map with context %}
+{% from "gw/firewall/map.jinja" import map with context %}
 include:
-  - firewall.basic-nat
+  - gw.firewall.basic-nat
 
 # Ensure that packets coming from internal network, heading towards forwarded port are properly natted
 # otherwise internal connections which rely on forward will not work properly

@@ -1,4 +1,4 @@
-{% from "firewall/map.jinja" import map with context %}
+{% from "gw/firewall/map.jinja" import map with context %}
 # create nat filter and basic rules
 # POSTROUTING chain
 iptables-nat-chain:

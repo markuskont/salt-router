@@ -13,7 +13,7 @@ isc-dhcp-server:
 /etc/default/isc-dhcp-server:
   file.managed:
     - mode: 0644
-    - source: salt://router/etc/default/isc-dhcp-server
+    - source: salt://gw/router/etc/default/isc-dhcp-server
     - template: jinja
     - default:
       interfaces: {{vars['interfaces']}}
@@ -23,7 +23,7 @@ isc-dhcp-server:
 /etc/dhcp/dhcpd.conf:
   file.managed:
     - mode: 0644
-    - source: salt://router/etc/dhcp/dhcpd.conf
+    - source: salt://gw/router/etc/dhcp/dhcpd.conf
     - template: jinja
     - default:
       domain: {{vars['domain']}}

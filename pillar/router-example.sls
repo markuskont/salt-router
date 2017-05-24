@@ -23,6 +23,11 @@ router:
             max: 86400
     dns:
       manage: true
+  jessie-r1:
+    dhcp:
+      manage: false
+    dns:
+      manage: false
 
 firewall:
   xenial-r1:
@@ -43,3 +48,5 @@ firewall:
           restrictions:
             - 1.2.3.4/32
             - 3.4.5.0/24
+  jessie-r1:
+    manage: false

@@ -12,4 +12,4 @@ bind9:
 /etc/bind/named.conf.options:
   file.managed:
     - mode: 0644
-    - source: salt://router/etc/bind/named.conf.options
+    - source: salt://gw/router/etc/bind/named.conf.options
