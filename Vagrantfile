@@ -20,22 +20,21 @@ boxes = [
       2180 =>  2180
     }
   },
-  boxes = [
-    {
-      :name         => "jessie-r1",
-      :mem          => "1024",
-      :cpu          => "1",
-      :image        => 'ubuntu/jessie64',
-      :internal     => {
-        :int1 => "192.168.1.253",
-        :int2 => "192.168.2.253"
-      },
-      :salt         => true,
-      :saltmaster   => false,
-      :portforward  => {
-        2180 =>  2180
-      }
+  {
+    :name         => "jessie-r1",
+    :mem          => "1024",
+    :cpu          => "1",
+    :image        => 'ubuntu/jessie64',
+    :internal     => {
+      :int1 => "192.168.1.253",
+      :int2 => "192.168.2.1"
     },
+    :salt         => true,
+    :saltmaster   => false,
+    :portforward  => {
+      2180 =>  2180
+    }
+  },
 #  {
 #    :name       => "xenial-client",
 #    :mem        => "1024",
