@@ -1,0 +1,34 @@
+file_recv: True
+file_roots:
+  base:
+    - /srv/salt
+  DEVEL:
+    - /srv/salt/
+    - /vagrant/salt
+    - /vagrant/vagrant
+    - /var/cache/salt/master/minions
+pillar_roots:
+  base:
+    - /vagrant/pillar/
+worker_threads: 3
+hash_type: sha256
+jinja_trim_blocks: True
+jinja_lstrip_blocks: True
+
+#winrepo_dir: /srv/winrepo/win/repo
+#winrepo_dir_ng: /srv/winrepo/win/repo_ng
+#winrepo_mastercachefile: '/srv/winrepo/win/repo/winrepo.p'
+
+reactor:
+  - 'minion_start':
+    - /vagrant/reactor/sync_grains.sls
+
+client_acl:
+  vagrant:
+    - .*
+  ubuntu:
+    - .*
+
+peer:
+  .*:
+    - x509.sign_remote_certificate
