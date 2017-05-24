@@ -23,11 +23,16 @@ router:
             max: 86400
     dns:
       manage: true
+    suricata:
+      manage: true
+      homenet: '[10.0.0.0/8]'
   jessie-r1:
     dhcp:
       manage: false
     dns:
       manage: false
+    suricata:
+      manage: true
 
 firewall:
   xenial-r1:

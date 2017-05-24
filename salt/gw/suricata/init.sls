@@ -38,18 +38,20 @@ gw.suricata:
   service.running:
     - name: suricata
     - enable: True
-#    - watch:
-#      - /etc/default/suricata
-#      - /etc/suricata/suricata.yam
+    - watch:
+      - /etc/default/suricata
+      - /etc/suricata/suricata.yam
 
-#/etc/suricata/suricata.yam:
-#  file.managed:
-#    - mode: 644
-#    - source: salt://files/suricata.jinja
-#    - template: jinja
-#
-#
-#/etc/default/suricata:
-#  file.managed:
-#    - mode: 644
-#    - source: salt://files/default.conf
+/etc/suricata/suricata.yam:
+  file.managed:
+    - mode: 644
+    - source: salt://gw/suricata/files/suricata.jinja
+    - template: jinja
+    - defaults:
+      vars: pillar['router'][grains.fqdn]
+
+
+/etc/default/suricata:
+  file.managed:
+    - mode: 644
+    - source: salt://gw/suricata/files/default.conf
