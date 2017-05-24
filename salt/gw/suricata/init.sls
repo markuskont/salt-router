@@ -1,12 +1,9 @@
-{% set pkg = 'suricata' %}
-{% set conf = '/etc/suricata/suricata.yaml' %}
-{% set params = '/etc/default/suricata' %}
 {% set os = grains.os|lower() %}
 
 include:
-  - ethtool
+  - gw.suricata.ethtool
 
-{{pkg}}:
+suricata:
   pkgrepo.managed:
     - humanname: OISF suricata stable repository
     - clean_file: True
