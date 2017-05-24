@@ -24,10 +24,10 @@ boxes = [
     :name         => "jessie-r1",
     :mem          => "1024",
     :cpu          => "1",
-    :image        => 'ubuntu/jessie64',
+    :image        => 'debian/jessie64',
     :internal     => {
       :int1 => "192.168.1.253",
-      :int2 => "192.168.2.1"
+      :int2 => "192.168.2.253"
     },
     :salt         => true,
     :saltmaster   => false,
