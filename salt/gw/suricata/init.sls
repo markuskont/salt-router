@@ -47,7 +47,7 @@ gw.suricata:
     - mode: 644
     - source: salt://gw/suricata/files/suricata.jinja
     - template: jinja
-    - defaults:
+    - default:
       vars: pillar['router'][grains.fqdn]
 
 
