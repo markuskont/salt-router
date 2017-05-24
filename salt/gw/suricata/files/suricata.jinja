@@ -1,14 +1,15 @@
 %YAML 1.1
 ---
+{% set vars = pillar['router'][grains.fqdn] %}
 
 vars:
   # more specifc is better for alert accuracy and performance
   address-groups:
-    {% if 'homenet' in vars.suricata %}
+  {% if 'homenet' in vars.suricata %}
     HOME_NET: "{{ vars.suricata.homenet }}"
-    {% else %}
-    HOME_NET: "[192.168.0.0/16,10.0.0.0/8]"
-    {% endif %}
+  {% else %}
+    HOME_NET: "[10.0.0.0/8,192.168.0.0/16]"
+  {% endif %}
 
     EXTERNAL_NET: "!$HOME_NET"
     #EXTERNAL_NET: "any"
