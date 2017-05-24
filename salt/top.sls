@@ -1,10 +1,13 @@
 DEVEL:
   'roles:router':
     - match: grain
-    - router
+    - gw.router
   'roles:firewall':
     - match: grain
-    - firewall
+    - gw.firewall
   'roles:vpn':
     - match: grain
-    - openvpn
+    - gw.openvpn
+  'roles:ids':
+    - match: grains
+    - gw.suricata
