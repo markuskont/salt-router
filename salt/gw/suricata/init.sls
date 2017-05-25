@@ -40,9 +40,9 @@ gw.suricata:
     - enable: True
     - watch:
       - /etc/default/suricata
-      - /etc/suricata/suricata.yam
+      - /etc/suricata/suricata.yaml
 
-/etc/suricata/suricata.yam:
+/etc/suricata/suricata.yaml:
   file.managed:
     - mode: 644
     - source: salt://gw/suricata/files/suricata.jinja

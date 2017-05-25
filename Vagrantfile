@@ -7,8 +7,8 @@ SALT = 'stable' # stable|git|daily|testing
 boxes = [
   {
     :name         => "xenial-r1",
-    :mem          => "1024",
-    :cpu          => "1",
+    :mem          => "2048",
+    :cpu          => "2",
     :image        => 'ubuntu/xenial64',
     :internal     => {
       :int1 => "192.168.1.254",
@@ -22,8 +22,8 @@ boxes = [
   },
   {
     :name         => "jessie-r1",
-    :mem          => "1024",
-    :cpu          => "1",
+    :mem          => "2048",
+    :cpu          => "2",
     :image        => 'debian/jessie64',
     :internal     => {
       :int1 => "192.168.1.253",
