@@ -3,3 +3,5 @@ data/
 tests/node_modules/
 
 *.log
+
+salt/gw/suricata/rules/
